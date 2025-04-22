@@ -1,0 +1,193 @@
+{% extends "base.html" %}
+
+{% block title %}Gestión de Clientes{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/clientes.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="clientes-container">
+    <div class="clientes-header slide-in">
+        <h1>Gestión de Clientes</h1>
+        <p>Administre la información de los clientes del sistema</p>
+    </div>
+
+    <!-- Filtros y Búsqueda -->
+    <div class="filtros-container slide-in">
+        <div class="filtros-row">
+            <div class="filtro-group">
+                <label for="busqueda">Buscar Cliente</label>
+                <div class="search-box">
+                    <input type="text" id="busqueda" placeholder="Buscar por nombre, email o teléfono...">
+                    <i class="fas fa-search"></i>
+                </div>
+            </div>
+            <div class="filtro-group">
+                <label for="tipo_cliente">Tipo de Cliente</label>
+                <select id="tipo_cliente">
+                    <option value="">Todos</option>
+                    <option value="Frecuente">Frecuente</option>
+                    <option value="ESPORADICO">Esporádico</option>
+                </select>
+            </div>
+            <div class="filtro-group">
+                <label for="estado">Estado</label>
+                <select id="estado">
+                    <option value="">Todos</option>
+                    <option value="active">Activo</option>
+                    <option value="inactive">Inactivo</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabla de Clientes -->
+    <div class="tabla-clientes slide-in">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Email</th>
+                    <th>Teléfono</th>
+                    <th>Ciudad</th>
+                    <th>Tipo</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody id="clientesTableBody">
+                <!-- Los datos se cargarán dinámicamente -->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Paginación -->
+    <div class="paginacion-container">
+        <button id="prevPage" class="paginacion-btn">Anterior</button>
+        <span id="paginaActual" class="paginacion-info">Página 1</span>
+        <button id="nextPage" class="paginacion-btn">Siguiente</button>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://kit.fontawesome.com/a076d05399.js"></script>
+<script>
+    let paginaActual = 1;
+    const clientesPorPagina = 10;
+    let clientesFiltrados = [];
+
+    // Función para cargar clientes
+    async function cargarClientes() {
+        try {
+            const response = await fetch('/api/clientes');
+            const data = await response.json();
+            
+            if (data.success) {
+                clientesFiltrados = data.clientes;
+                mostrarClientes();
+            } else {
+                console.error('Error al cargar clientes:', data.message);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    }
+
+    // Función para mostrar clientes en la tabla
+    function mostrarClientes() {
+        const tbody = document.getElementById('clientesTableBody');
+        tbody.innerHTML = '';
+
+        const inicio = (paginaActual - 1) * clientesPorPagina;
+        const fin = inicio + clientesPorPagina;
+        const clientesPagina = clientesFiltrados.slice(inicio, fin);
+
+        clientesPagina.forEach(cliente => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${cliente.cliente_id}</td>
+                <td>${cliente.first_name} ${cliente.last_name}</td>
+                <td>${cliente.email}</td>
+                <td>${cliente.phone_number}</td>
+                <td>${cliente.city || ''}</td>
+                <td>${cliente.client_type || ''}</td>
+                <td>
+                    <span class="estado-badge ${cliente.status === 'active' ? 'estado-activo' : 'estado-inactivo'}">
+                        ${cliente.status === 'active' ? 'Activo' : 'Inactivo'}
+                    </span>
+                </td>
+                <td>
+                    <button class="btn-editar" onclick="editarCliente(${cliente.cliente_id})">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="btn-ver" onclick="verCliente(${cliente.cliente_id})">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+
+        actualizarPaginacion();
+    }
+
+    // Función para actualizar la paginación
+    function actualizarPaginacion() {
+        const totalPaginas = Math.ceil(clientesFiltrados.length / clientesPorPagina);
+        document.getElementById('paginaActual').textContent = `Página ${paginaActual} de ${totalPaginas}`;
+        document.getElementById('prevPage').disabled = paginaActual === 1;
+        document.getElementById('nextPage').disabled = paginaActual === totalPaginas;
+    }
+
+    // Event listeners para la paginación
+    document.getElementById('prevPage').addEventListener('click', () => {
+        if (paginaActual > 1) {
+            paginaActual--;
+            mostrarClientes();
+        }
+    });
+
+    document.getElementById('nextPage').addEventListener('click', () => {
+        const totalPaginas = Math.ceil(clientesFiltrados.length / clientesPorPagina);
+        if (paginaActual < totalPaginas) {
+            paginaActual++;
+            mostrarClientes();
+        }
+    });
+
+    // Event listeners para los filtros
+    document.getElementById('busqueda').addEventListener('input', filtrarClientes);
+    document.getElementById('tipo_cliente').addEventListener('change', filtrarClientes);
+    document.getElementById('estado').addEventListener('change', filtrarClientes);
+
+    // Función para filtrar clientes
+    function filtrarClientes() {
+        const busqueda = document.getElementById('busqueda').value.toLowerCase();
+        const tipoCliente = document.getElementById('tipo_cliente').value;
+        const estado = document.getElementById('estado').value;
+
+        clientesFiltrados = clientesFiltrados.filter(cliente => {
+            const nombreCompleto = `${cliente.first_name} ${cliente.last_name}`.toLowerCase();
+            const email = cliente.email.toLowerCase();
+            const telefono = cliente.phone_number.toLowerCase();
+
+            const coincideBusqueda = nombreCompleto.includes(busqueda) || 
+                                  email.includes(busqueda) || 
+                                  telefono.includes(busqueda);
+            const coincideTipo = !tipoCliente || cliente.client_type === tipoCliente;
+            const coincideEstado = !estado || cliente.status === estado;
+
+            return coincideBusqueda && coincideTipo && coincideEstado;
+        });
+
+        paginaActual = 1;
+        mostrarClientes();
+    }
+
+    // Cargar clientes al iniciar la página
+    document.addEventListener('DOMContentLoaded', cargarClientes);
+</script>
+{% endblock %} 

@@ -1,0 +1,441 @@
+/* Estilos específicos para el sistema de órdenes */
+.stats-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.stat-card {
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    transition: transform 0.2s;
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+}
+
+.stat-card i {
+    font-size: 2rem;
+    color: #2c3e50;
+}
+
+.stat-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.stat-value {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.stat-label {
+    font-size: 0.9rem;
+    color: #666;
+}
+
+/* Filtros */
+.filters {
+    background-color: #fff;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-bottom: 1.5rem;
+}
+
+.search-box {
+    position: relative;
+    margin-bottom: 1rem;
+}
+
+.search-box input {
+    width: 100%;
+    padding: 0.75rem 2.5rem 0.75rem 1rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+    transition: border-color 0.2s;
+}
+
+.search-box input:focus {
+    border-color: #2c3e50;
+    outline: none;
+}
+
+.search-box i {
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #666;
+}
+
+.filter-group {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.filter-group select,
+.filter-group input[type="date"] {
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    min-width: 150px;
+}
+
+/* Estados */
+.estado {
+    padding: 0.25rem 0.75rem;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-align: center;
+    display: inline-block;
+}
+
+.estado-pendiente {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+.estado-revision {
+    background-color: #cce5ff;
+    color: #004085;
+}
+
+.estado-reparado {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.estado-no-reparado {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+/* Tiempo */
+.tiempo {
+    font-family: monospace;
+    background-color: #e9ecef;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+}
+
+/* Tabla */
+.table-container {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+
+th, td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+}
+
+th {
+    background-color: #2c3e50;
+    color: #fff;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+tbody tr:hover {
+    background-color: #f8f9fa;
+}
+
+/* Paginación */
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+#paginaActual {
+    font-weight: 500;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .stats-container {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .table-container {
+        overflow-x: auto;
+    }
+    
+    table {
+        font-size: 0.8rem;
+    }
+    
+    th, td {
+        padding: 0.75rem;
+    }
+    
+    .filter-group {
+        flex-direction: column;
+    }
+    
+    .filter-group select,
+    .filter-group input[type="date"] {
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .stats-container {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Estilos específicos para la página de Órdenes de Servicio */
+
+/* Contenedor principal */
+.ordenes-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+/* Encabezado de la página */
+.ordenes-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.ordenes-header h1 {
+    color: var(--primary-color);
+    margin: 0;
+}
+
+/* Botón de nueva orden */
+.btn-nueva-orden {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 5px;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s;
+}
+
+.btn-nueva-orden:hover {
+    background-color: var(--dark-color);
+    color: white;
+}
+
+/* Filtros y búsqueda */
+.filtros-container {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.1);
+    margin-bottom: 2rem;
+}
+
+.filtros-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.filtro-group {
+    flex: 1;
+    min-width: 200px;
+}
+
+.filtro-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--secondary-color);
+    font-weight: 500;
+}
+
+.filtro-group select,
+.filtro-group input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #dee2e6;
+    border-radius: 5px;
+    background-color: white;
+}
+
+/* Tabla de órdenes */
+.tabla-ordenes {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.1);
+    overflow: hidden;
+}
+
+.tabla-ordenes table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.tabla-ordenes th,
+.tabla-ordenes td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.tabla-ordenes th {
+    background-color: var(--primary-color);
+    color: white;
+    font-weight: 500;
+}
+
+.tabla-ordenes tr:hover {
+    background-color: rgba(0,0,0,0.02);
+}
+
+/* Estados de las órdenes */
+.estado-badge {
+    padding: 0.5rem 1rem;
+    border-radius: 50px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    display: inline-block;
+}
+
+.estado-pendiente {
+    background-color: var(--warning-color);
+    color: var(--dark-color);
+}
+
+.estado-revision {
+    background-color: var(--info-color);
+    color: white;
+}
+
+.estado-reparado {
+    background-color: var(--success-color);
+    color: white;
+}
+
+.estado-no-reparado {
+    background-color: var(--danger-color);
+    color: white;
+}
+
+/* Paginación */
+.paginacion-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.paginacion-btn {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 5px;
+    background-color: var(--primary-color);
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.paginacion-btn:disabled {
+    background-color: var(--secondary-color);
+    cursor: not-allowed;
+}
+
+.paginacion-btn:hover:not(:disabled) {
+    background-color: var(--dark-color);
+}
+
+.paginacion-info {
+    color: var(--secondary-color);
+    font-weight: 500;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .ordenes-container {
+        padding: 1rem;
+    }
+
+    .ordenes-header {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+    }
+
+    .filtros-row {
+        flex-direction: column;
+    }
+
+    .filtro-group {
+        width: 100%;
+    }
+
+    .tabla-ordenes {
+        overflow-x: auto;
+    }
+
+    .tabla-ordenes table {
+        min-width: 800px;
+    }
+}
+
+/* Animaciones */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.fade-in {
+    animation: fadeIn 0.5s ease-in;
+}
+
+/* Mensajes */
+.mensaje-container {
+    margin-bottom: 1.5rem;
+}
+
+.mensaje-exito {
+    background-color: rgba(25, 135, 84, 0.1);
+    color: var(--success-color);
+    padding: 1rem;
+    border-radius: 5px;
+    border-left: 4px solid var(--success-color);
+}
+
+.mensaje-error {
+    background-color: rgba(220, 53, 69, 0.1);
+    color: var(--danger-color);
+    padding: 1rem;
+    border-radius: 5px;
+    border-left: 4px solid var(--danger-color);
+}

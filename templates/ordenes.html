@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="es">
+   <head>
+      <!-- basic -->
+      <meta charset="utf-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <!-- mobile metas -->
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+      <!-- site metas -->
+      <title>TecnoComputer - Órdenes de Servicio</title>
+      <meta name="keywords" content="">
+      <meta name="description" content="">
+      <meta name="author" content="">
+      <!-- bootstrap css -->
+      <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+      <!-- style css -->
+      <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+      <!-- Responsive-->
+      <link rel="stylesheet" href="{{ url_for('static', filename='css/responsive.css') }}">
+      <!-- fevicon -->
+      <link rel="icon" href="{{ url_for('static', filename='images/fevicon.png') }}" type="image/gif" />
+      <!-- Scrollbar Custom CSS -->
+      <link rel="stylesheet" href="{{ url_for('static', filename='css/jquery.mCustomScrollbar.min.css') }}">
+      <!-- Tweaks for older IEs-->
+      <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+      <!-- Sistema de Órdenes CSS -->
+      <link rel="stylesheet" href="{{ url_for('static', filename='css/ordenes.css') }}">
+   </head>
+   <!-- body -->
+   <body class="main-layout inner_posituong">
+      <!-- loader  -->
+      <div class="loader_bg">
+         <div class="loader"><img src="{{ url_for('static', filename='images/loading.gif') }}" alt="#" /></div>
+      </div>
+      <!-- end loader -->
+      <!-- header -->
+      <header>
+         <div class="header">
+            <div class="container">
+               <div class="row">
+                  <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col logo_section">
+                     <div class="full">
+                        <div class="center-desk">
+                           <div class="logo">
+                              <a href="{{ url_for('index') }}"><img src="{{ url_for('static', filename='images/logo.png') }}" alt="#" /></a>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+                  <div class="col-xl-9 col-lg-9 col-md-9 col-sm-9">
+                     <nav class="navigation navbar navbar-expand-md navbar-dark">
+                        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExample04" aria-controls="navbarsExample04" aria-expanded="false" aria-label="Toggle navigation">
+                           <span class="navbar-toggler-icon"></span>
+                        </button>
+                        <div class="collapse navbar-collapse" id="navbarsExample04">
+                           <ul class="navbar-nav mr-auto">
+                              <li class="nav-item">
+                                 <a class="nav-link" href="{{ url_for('index') }}">Inicio</a>
+                              </li>
+                              <li class="nav-item">
+                                 <a class="nav-link" href="{{ url_for('nosotros') }}">Nosotros</a>
+                              </li>
+                              <li class="nav-item">
+                                 <a class="nav-link" href="{{ url_for('productos') }}">Productos</a>
+                              </li>
+                              {% if current_user.is_authenticated %}
+                              <li class="nav-item active">
+                                 <a class="nav-link" href="{{ url_for('ordenes') }}">Órdenes</a>
+                              </li>
+                              <li class="nav-item">
+                                 <a class="nav-link" href="{{ url_for('clientes') }}">Clientes</a>
+                              </li>
+                              <li class="nav-item">
+                                 <a class="nav-link" href="{{ url_for('logout') }}">Cerrar Sesión</a>
+                              </li>
+                              {% else %}
+                              <li class="nav-item">
+                                 <a class="nav-link" href="{{ url_for('login') }}">Iniciar Sesión</a>
+                              </li>
+                              {% endif %}
+                           </ul>
+                        </div>
+                     </nav>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </header>
+      <!-- end header -->
+
+      <!-- Sistema de Órdenes -->
+      <div class="container mt-4">
+         <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>Órdenes de Servicio</h2>
+            {% if current_user.rol == 'tecnico' %}
+            <a href="{{ url_for('agregar_orden') }}" class="btn btn-primary">
+               <i class="fas fa-plus"></i> Nueva Orden
+            </a>
+            {% endif %}
+         </div>
+         <!-- Resumen Estadístico -->
+         <div class="stats-container mb-2">
+            <div class="stat-card">
+               <i class="fas fa-clipboard-list"></i>
+               <div class="stat-info">
+                  <span class="stat-value" id="totalOrdenes">0</span>
+                  <span class="stat-label">Total Órdenes</span>
+               </div>
+            </div>
+            <div class="stat-card">
+               <i class="fas fa-clock"></i>
+               <div class="stat-info">
+                  <span class="stat-value" id="ordenesPendientes">0</span>
+                  <span class="stat-label">Pendientes</span>
+               </div>
+            </div>
+            <div class="stat-card">
+               <i class="fas fa-tools"></i>
+               <div class="stat-info">
+                  <span class="stat-value" id="ordenesEnRevision">0</span>
+                  <span class="stat-label">En Revisión</span>
+               </div>
+            </div>
+            <div class="stat-card">
+               <i class="fas fa-check-circle"></i>
+               <div class="stat-info">
+                  <span class="stat-value" id="ordenesReparadas">0</span>
+                  <span class="stat-label">Reparadas</span>
+               </div>
+            </div>
+            <div class="stat-card">
+               <i class="fas fa-times-circle"></i>
+               <div class="stat-info">
+                  <span class="stat-value" id="ordenesNoReparadas">0</span>
+                  <span class="stat-label">No Reparadas</span>
+               </div>
+            </div>
+         </div>
+
+         <!-- Filtros -->
+         <div class="filters mb-2">
+            <div class="search-box">
+               <input type="text" id="searchInput" placeholder="Buscar por ID, cliente, marca, modelo...">
+               <i class="fas fa-search"></i>
+            </div>
+            <div class="filter-group">
+               <select id="estadoFilter">
+                  <option value="">Todos los estados</option>
+                  <option value="Pendiente por revision">Pendiente</option>
+                  <option value="En Revision">En Revisión</option>
+                  <option value="REPARADO">Reparado</option>
+                  <option value="NO REPARADO">No Reparado</option>
+               </select>
+               <input type="date" id="fechaDesde" placeholder="Fecha desde">
+               <input type="date" id="fechaHasta" placeholder="Fecha hasta">
+               <button id="aplicarFiltros" class="btn-primary">
+                  <i class="fas fa-filter"></i> Aplicar Filtros
+               </button>
+               <button id="limpiarFiltros" class="btn-secondary">
+                  <i class="fas fa-sync"></i> Limpiar
+               </button>
+            </div>
+         </div>
+
+         <!-- Tabla -->
+         <div class="table-container">
+            <table id="ordenesServicioTable">
+               <thead>
+                  <tr>
+                     <th>ID Orden</th>
+                     <th>ID Cliente</th>
+                     <th>Fecha Entrada</th>
+                     <th>Inicio Trabajo</th>
+                     <th>Fin Trabajo</th>
+                     <th>Tiempo</th>
+                     <th>Estado</th>
+                     <th>Diagnóstico Final</th>
+                     <th>Marca</th>
+                     <th>Modelo</th>
+                     <th>Serial</th>
+                     <th>Tickets</th>
+                     <th>Acciones</th>
+                  </tr>
+               </thead>
+               <tbody>
+                  <tr>
+                     <td colspan="13" class="text-center">Cargando datos...</td>
+                  </tr>
+               </tbody>
+            </table>
+         </div>
+
+         <!-- Paginación -->
+         <div class="pagination">
+            <button id="prevPage" class="btn-secondary" disabled>
+               <i class="fas fa-chevron-left"></i> Anterior
+            </button>
+            <span id="paginaActual">Página 1</span>
+            <button id="nextPage" class="btn-secondary">
+               Siguiente <i class="fas fa-chevron-right"></i>
+            </button>
+         </div>
+      </div>
+      <!-- end Sistema de Órdenes -->
+
+      <!-- Modal de Tickets -->
+      <div class="modal fade" id="ticketsModal" tabindex="-1" role="dialog" aria-labelledby="ticketsModalLabel" aria-hidden="true">
+         <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+               <div class="modal-header">
+                  <h5 class="modal-title" id="ticketsModalLabel">Tickets de la Orden</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                     <span aria-hidden="true">&times;</span>
+                  </button>
+               </div>
+               <div class="modal-body">
+                  <div class="d-flex justify-content-between align-items-center mb-3">
+                     <h6>Tickets asociados</h6>
+                     <button class="btn btn-primary btn-sm" id="nuevoTicketBtn">
+                        <i class="fas fa-plus"></i> Nuevo Ticket
+                     </button>
+                  </div>
+                  <div id="ticketsList" class="mb-3">
+                     <!-- Lista de tickets se cargará aquí -->
+                  </div>
+                  <div id="nuevoTicketForm" style="display: none;">
+                     <h6>Crear Nuevo Ticket</h6>
+                     <form id="ticketForm">
+                        <input type="hidden" id="ordenId" name="orden_id">
+                        <div class="form-group">
+                           <label for="titulo">Título</label>
+                           <input type="text" class="form-control" id="titulo" name="titulo" required>
+                        </div>
+                        <div class="form-group">
+                           <label for="descripcion">Descripción</label>
+                           <textarea class="form-control" id="descripcion" name="descripcion" rows="3" required></textarea>
+                        </div>
+                        <div class="form-group">
+                           <label for="departamento">Departamento</label>
+                           <select class="form-control" id="departamento" name="departamento_id" required>
+                              <option value="">Seleccionar departamento</option>
+                           </select>
+                        </div>
+                        <div class="form-group">
+                           <label for="prioridad">Prioridad</label>
+                           <select class="form-control" id="prioridad" name="prioridad">
+                              <option value="normal">Normal</option>
+                              <option value="alta">Alta</option>
+                              <option value="urgente">Urgente</option>
+                           </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Crear Ticket</button>
+                        <button type="button" class="btn btn-secondary" id="cancelarTicketBtn">Cancelar</button>
+                     </form>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+
+      <!-- footer -->
+      <footer>
+         <div class="footer">
+            <div class="container">
+               <div class="row">
+                  <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6">
+                     <h3>Redes Sociales</h3>
+                     <ul class="social_icon">
+                        <li><a href="#"><i class="fa fa-facebook" aria-hidden="true"></i></a></li>
+                        <li><a href="#"><i class="fa fa-twitter" aria-hidden="true"></i></a></li>
+                        <li><a href="#"><i class="fa fa-linkedin-square" aria-hidden="true"></i></a></li>
+                        <li><a href="#"><i class="fa fa-instagram" aria-hidden="true"></i></a></li>
+                     </ul>
+                  </div>
+                  <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6">
+                     <h3>Sobre Nosotros</h3>
+                     <ul class="about_us">
+                        <li>Servicio técnico especializado en computadoras y laptops</li>
+                     </ul>
+                  </div>
+                  <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6">
+                     <h3>Contacto</h3>
+                     <ul class="conta">
+                        <li>Teléfono: (123) 456-7890</li>
+                        <li>Email: info@tecnocomputer.com</li>
+                     </ul>
+                  </div>
+                  <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6">
+                     <form class="bottom_form">
+                        <h3>Newsletter</h3>
+                        <input class="enter" placeholder="Ingresa tu email" type="text" name="email">
+                        <button class="sub_btn">Suscribirse</button>
+                     </form>
+                  </div>
+               </div>
+            </div>
+            <div class="copyright">
+               <div class="container">
+                  <div class="row">
+                     <div class="col-md-12">
+                        <p>© 2024 Todos los derechos reservados. TecnoComputer</p>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </footer>
+      <!-- end footer -->
+
+      <!-- Javascript files-->
+      <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+      <script src="{{ url_for('static', filename='js/popper.min.js') }}"></script>
+      <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
+      <script src="{{ url_for('static', filename='js/jquery-3.0.0.min.js') }}"></script>
+      <!-- sidebar -->
+      <script src="{{ url_for('static', filename='js/jquery.mCustomScrollbar.concat.min.js') }}"></script>
+      <script src="{{ url_for('static', filename='js/custom.js') }}"></script>
+      <script src="{{ url_for('static', filename='js/ordenes.js') }}"></script>
+   </body>
+</html>
+

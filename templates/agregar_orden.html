@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <!-- basic -->
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- mobile metas -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+    <!-- site metas -->
+    <title>Nueva Orden de Servicio - TecnoComputer</title>
+    <!-- bootstrap css -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+    <!-- style css -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <!-- Responsive-->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/responsive.css') }}">
+    <!-- fevicon -->
+    <link rel="icon" href="{{ url_for('static', filename='images/icon.png') }}" type="image/png" />
+    <!-- Scrollbar Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/jquery.mCustomScrollbar.min.css') }}">
+    <!-- Tweaks for older IEs-->
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css" media="screen">
+    <!-- Estilos específicos para agregar orden -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/agregar_orden.css') }}">
+</head>
+<body class="main-layout">
+    <!-- loader  -->
+    <div class="loader_bg">
+        <div class="loader"><img src="{{ url_for('static', filename='images/loading.gif') }}" alt="#" /></div>
+    </div>
+    <!-- end loader -->
+    <!-- header -->
+    <header>
+        <!-- header inner -->
+        <div class="header">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col logo_section">
+                        <div class="full">
+                            <div class="center-desk">
+                                <div class="logo">
+                                    <a href="{{ url_for('index') }}"><img src="{{ url_for('static', filename='images/logo.png') }}" alt="#" /></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-9 col-lg-9 col-md-9 col-sm-9">
+                        <nav class="navigation navbar navbar-expand-md navbar-dark">
+                            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExample04" aria-controls="navbarsExample04" aria-expanded="false" aria-label="Toggle navigation">
+                                <span class="navbar-toggler-icon"></span>
+                            </button>
+                            <div class="collapse navbar-collapse" id="navbarsExample04">
+                                <ul class="navbar-nav mr-auto">
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="{{ url_for('index') }}">Inicio</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="{{ url_for('nosotros') }}">Nosotros</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="{{ url_for('productos') }}">Productos</a>
+                                    </li>
+                                    {% if current_user.is_authenticated %}
+                                    <li class="nav-item active">
+                                        <a class="nav-link" href="{{ url_for('ordenes') }}">Órdenes</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="{{ url_for('clientes') }}">Clientes</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="{{ url_for('logout') }}">Cerrar Sesión</a>
+                                    </li>
+                                    {% else %}
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="{{ url_for('login') }}">Iniciar Sesión</a>
+                                    </li>
+                                    {% endif %}
+                                </ul>
+                            </div>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    <!-- end header inner -->
+    <!-- end header -->
+
+    <div class="agregar-orden-container">
+        <div class="agregar-orden-header slide-in">
+            <h1>Nueva Orden de Servicio</h1>
+            <p>Complete el formulario para crear una nueva orden de servicio</p>
+        </div>
+
+        <form id="ordenForm" class="agregar-orden-form slide-in">
+            <!-- Información del Cliente -->
+            <div class="form-section">
+                <h2>Información del Cliente</h2>
+                <div class="form-group">
+                    <label for="cliente_id">ID del Cliente</label>
+                    <input type="text" id="cliente_id" name="cliente_id" required>
+                    <div id="cliente_info" class="cliente-info" style="display: none;">
+                        <p><strong>Nombre:</strong> <span id="cliente_nombre"></span></p>
+                        <p><strong>Email:</strong> <span id="cliente_email"></span></p>
+                        <p><strong>Teléfono:</strong> <span id="cliente_telefono"></span></p>
+                    </div>
+                    <div id="nuevo_cliente_form" class="nuevo-cliente-form" style="display: none;">
+                        <h3>Información del Nuevo Cliente</h3>
+                        <div class="form-group">
+                            <label for="cliente_nombre_input">Nombre</label>
+                            <input type="text" id="cliente_nombre_input" name="first_name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="cliente_apellido_input">Apellido</label>
+                            <input type="text" id="cliente_apellido_input" name="last_name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="cliente_email_input">Email</label>
+                            <input type="email" id="cliente_email_input" name="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="cliente_telefono_input">Teléfono</label>
+                            <input type="tel" id="cliente_telefono_input" name="phone_number" required>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Información del Equipo -->
+            <div class="form-section">
+                <h2>Información del Equipo</h2>
+                <div class="form-group">
+                    <label for="marca">Marca</label>
+                    <input type="text" id="marca" name="marca" required>
+                </div>
+                <div class="form-group">
+                    <label for="modelo">Modelo</label>
+                    <input type="text" id="modelo" name="modelo" required>
+                </div>
+                <div class="form-group">
+                    <label for="serial">Número de Serie</label>
+                    <input type="text" id="serial" name="serial" required>
+                </div>
+                <div class="form-group">
+                    <label for="tipo">Tipo de Equipo</label>
+                    <select id="tipo" name="tipo" required>
+                        <option value="">Seleccione un tipo</option>
+                        <option value="laptop">Laptop</option>
+                        <option value="desktop">Desktop</option>
+                        <option value="tablet">Tablet</option>
+                        <option value="smartphone">Smartphone</option>
+                        <option value="otro">Otro</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Diagnóstico Inicial -->
+            <div class="form-section">
+                <h2>Diagnóstico Inicial</h2>
+                <div class="form-group">
+                    <label for="diag_inicial">Descripción del Problema</label>
+                    <textarea id="diag_inicial" name="diag_inicial" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="observaciones">Observaciones Adicionales</label>
+                    <textarea id="observaciones" name="observaciones"></textarea>
+                </div>
+            </div>
+
+            <!-- Información Adicional -->
+            <div class="form-section">
+                <h2>Información Adicional</h2>
+                <div class="form-group">
+                    <label for="prioridad">Prioridad</label>
+                    <select id="prioridad" name="prioridad" required>
+                        <option value="baja">Baja</option>
+                        <option value="media">Media</option>
+                        <option value="alta">Alta</option>
+                        <option value="urgente">Urgente</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="fecha_estimada">Fecha Estimada de Entrega</label>
+                    <input type="date" id="fecha_estimada" name="fecha_estimada" required>
+                </div>
+            </div>
+
+            <!-- Botones -->
+            <div class="form-buttons">
+                <button type="button" class="btn-cancel" onclick="window.location.href='/ordenes'">Cancelar</button>
+                <button type="submit" class="btn-submit">
+                    <span id="submitText">Crear Orden</span>
+                    <span id="loadingSpinner" class="loading-spinner" style="display: none;"></span>
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!--  footer -->
+    <footer>
+        <div class="footer">
+            <div class="container">
+                <div class="row">
+                    <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6">
+                        <img class="logo1" src="{{ url_for('static', filename='images/logo1.png') }}" alt="#"/>
+                        <ul class="social_icon">
+                            <li><a href="#"><i class="fa fa-facebook" aria-hidden="true"></i></a></li>
+                            <li><a href="#"><i class="fa fa-twitter" aria-hidden="true"></i></a></li>
+                            <li><a href="#"><i class="fa fa-linkedin-square" aria-hidden="true"></i></a></li>
+                            <li><a href="#"><i class="fa fa-instagram" aria-hidden="true"></i></a></li>
+                        </ul>
+                    </div>
+                    <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6">
+                        <h3>Sobre Nosotros</h3>
+                        <ul class="about_us">
+                            <li>TecnoComputer es tu aliado en tecnología, ofreciendo productos y servicios de calidad para todas tus necesidades informáticas.</li>
+                        </ul>
+                    </div>
+                    <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6">
+                        <h3>Contacto</h3>
+                        <ul class="conta">
+                            <li>Dirección: Av. Principal #123<br>
+                                Teléfono: (123) 456-7890<br>
+                                Email: info@tecnocomputer.com</li>
+                        </ul>
+                    </div>
+                    <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6">
+                        <form class="bottom_form">
+                            <h3>Newsletter</h3>
+                            <input class="enter" placeholder="Ingresa tu email" type="text" name="Enter your email">
+                            <button class="sub_btn">Suscribirse</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="copyright">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <p>© 2024 TecnoComputer. Todos los derechos reservados.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <!-- end footer -->
+
+    <!-- Javascript files-->
+    <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/popper.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/jquery.mCustomScrollbar.concat.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/custom.js') }}"></script>
+    <script>
+        document.getElementById('cliente_id').addEventListener('change', function() {
+            const clienteId = this.value;
+            if (clienteId) {
+                fetch(`/api/clientes/${clienteId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Cliente existe, mostrar información
+                            document.getElementById('cliente_info').style.display = 'block';
+                            document.getElementById('nuevo_cliente_form').style.display = 'none';
+                            document.getElementById('cliente_nombre').textContent = data.cliente.nombre;
+                            document.getElementById('cliente_email').textContent = data.cliente.email;
+                            document.getElementById('cliente_telefono').textContent = data.cliente.telefono;
+                        } else {
+                            // Cliente no existe, mostrar formulario para nuevo cliente
+                            document.getElementById('cliente_info').style.display = 'none';
+                            document.getElementById('nuevo_cliente_form').style.display = 'block';
+                            // Limpiar campos del formulario
+                            document.getElementById('cliente_nombre_input').value = '';
+                            document.getElementById('cliente_apellido_input').value = '';
+                            document.getElementById('cliente_email_input').value = '';
+                            document.getElementById('cliente_telefono_input').value = '';
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        document.getElementById('cliente_info').style.display = 'none';
+                        document.getElementById('nuevo_cliente_form').style.display = 'block';
+                    });
+            } else {
+                document.getElementById('cliente_info').style.display = 'none';
+                document.getElementById('nuevo_cliente_form').style.display = 'none';
+            }
+        });
+
+        document.getElementById('ordenForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const submitButton = document.querySelector('.btn-submit');
+            const submitText = document.getElementById('submitText');
+            const loadingSpinner = document.getElementById('loadingSpinner');
+            
+            submitButton.disabled = true;
+            submitText.style.display = 'none';
+            loadingSpinner.style.display = 'inline-block';
+
+            const clienteId = document.getElementById('cliente_id').value;
+            const nuevoClienteForm = document.getElementById('nuevo_cliente_form');
+            const isNuevoCliente = nuevoClienteForm.style.display === 'block';
+
+            // Validar campos requeridos
+            const camposRequeridos = ['marca', 'modelo', 'serial', 'tipo', 'diag_inicial'];
+            const camposFaltantes = camposRequeridos.filter(campo => !document.getElementById(campo).value);
+            
+            if (camposFaltantes.length > 0) {
+                alert(`Por favor complete los siguientes campos: ${camposFaltantes.join(', ')}`);
+                submitButton.disabled = false;
+                submitText.style.display = 'inline-block';
+                loadingSpinner.style.display = 'none';
+                return;
+            }
+
+            // Primero crear el cliente si es nuevo
+            const crearCliente = isNuevoCliente ? 
+                fetch('/api/clientes', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify({
+                        cliente_id: clienteId,
+                        first_name: document.getElementById('cliente_nombre_input').value,
+                        last_name: document.getElementById('cliente_apellido_input').value,
+                        email: document.getElementById('cliente_email_input').value,
+                        phone_number: document.getElementById('cliente_telefono_input').value
+                    })
+                }).then(response => {
+                    if (!response.ok) {
+                        return response.json().then(data => {
+                            throw new Error(data.error || 'Error al crear el cliente');
+                        });
+                    }
+                    return response.json();
+                }) :
+                Promise.resolve({ success: true, cliente_id: clienteId });
+
+            // Luego crear la orden
+            crearCliente.then(clienteResult => {
+                if (!clienteResult.success) {
+                    throw new Error(clienteResult.message || 'Error al crear el cliente');
+                }
+
+                const formData = {
+                    cliente_id: clienteResult.cliente_id || clienteId,
+                    marca: document.getElementById('marca').value,
+                    modelo: document.getElementById('modelo').value,
+                    serial: document.getElementById('serial').value,
+                    tipo: document.getElementById('tipo').value,
+                    diag_inicial: document.getElementById('diag_inicial').value,
+                    observaciones: document.getElementById('observaciones').value,
+                    prioridad: document.getElementById('prioridad').value,
+                    fecha_estimada: document.getElementById('fecha_estimada').value
+                };
+
+                return fetch('/api/ordenes_servicio', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify(formData)
+                }).then(response => {
+                    if (!response.ok) {
+                        return response.json().then(data => {
+                            throw new Error(data.error || 'Error al crear la orden');
+                        });
+                    }
+                    return response.json();
+                });
+            })
+            .then(data => {
+                if (data.success) {
+                    alert('Orden creada exitosamente');
+                    window.location.href = '/ordenes';
+                } else {
+                    throw new Error(data.message || 'Error al crear la orden');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert(error.message || 'Error al procesar la solicitud');
+            })
+            .finally(() => {
+                submitButton.disabled = false;
+                submitText.style.display = 'inline-block';
+                loadingSpinner.style.display = 'none';
+            });
+        });
+    </script>
+</body>
+</html> 

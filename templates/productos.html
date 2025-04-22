@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <!-- basic -->
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- mobile metas -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+    <!-- site metas -->
+    <title>TecnoComputer - Productos</title>
+    <meta name="keywords" content="computadoras, laptops, accesorios, tecnología">
+    <meta name="description" content="TecnoComputer - Productos de tecnología de calidad">
+    <meta name="author" content="TecnoComputer">
+    <!-- bootstrap css -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+    <!-- style css -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <!-- Responsive-->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/responsive.css') }}">
+    <!-- fevicon -->
+    <link rel="icon" href="{{ url_for('static', filename='images/fevicon.png') }}" type="image/gif" />
+    <!-- Scrollbar Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/jquery.mCustomScrollbar.min.css') }}">
+    <!-- Tweaks for older IEs-->
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css" media="screen">
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script><![endif]-->
+</head>
+<body class="main-layout">
+    <!-- loader  -->
+    <div class="loader_bg">
+        <div class="loader"><img src="{{ url_for('static', filename='images/loading.gif') }}" alt="#" /></div>
+    </div>
+    <!-- end loader -->
+    <!-- header -->
+    <header>
+        <!-- header inner -->
+        <div class="header">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col logo_section">
+                        <div class="full">
+                            <div class="center-desk">
+                                <div class="logo">
+                                    <a href="{{ url_for('index') }}"><img src="{{ url_for('static', filename='images/logo.png') }}" alt="#" /></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-9 col-lg-9 col-md-9 col-sm-9">
+                        <nav class="navigation navbar navbar-expand-md navbar-dark">
+                            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExample04" aria-controls="navbarsExample04" aria-expanded="false" aria-label="Toggle navigation">
+                                <span class="navbar-toggler-icon"></span>
+                            </button>
+                            <div class="collapse navbar-collapse" id="navbarsExample04">
+                                <ul class="navbar-nav mr-auto">
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="{{ url_for('index') }}">Inicio</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="{{ url_for('nosotros') }}">Nosotros</a>
+                                    </li>
+                                    <li class="nav-item active">
+                                        <a class="nav-link" href="{{ url_for('productos') }}">Productos</a>
+                                    </li>
+                                    {% if 'user_id' in session %}
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="{{ url_for('ordenes') }}">Órdenes</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="{{ url_for('clientes') }}">Clientes</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="{{ url_for('logout') }}">Cerrar Sesión</a>
+                                    </li>
+                                    {% else %}
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="{{ url_for('login') }}" onclick="event.preventDefault(); window.location.href='{{ url_for('login') }}';">Iniciar Sesión</a>
+                                    </li>
+                                    {% endif %}
+                                </ul>
+                            </div>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    <!-- end header inner -->
+    <!-- end header -->
+
+    <!-- Computadoras -->
+    <div class="computadoras">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="titlepage">
+                        <h2>Computadoras de Escritorio</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6">
+                    <div class="product_box">
+                        <figure><img src="{{ url_for('static', filename='images/product1.png') }}" alt="#"/></figure>
+                        <h3>Computadora Gamer</h3>
+                        <p>Potente equipo para gaming y trabajo intensivo</p>
+                    </div>
+                </div>
+                <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6">
+                    <div class="product_box">
+                        <figure><img src="{{ url_for('static', filename='images/product2.png') }}" alt="#"/></figure>
+                        <h3>Computadora Oficina</h3>
+                        <p>Ideal para trabajo de oficina y tareas diarias</p>
+                    </div>
+                </div>
+                <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6">
+                    <div class="product_box">
+                        <figure><img src="{{ url_for('static', filename='images/product3.png') }}" alt="#"/></figure>
+                        <h3>Computadora Diseño</h3>
+                        <p>Especializada para diseño gráfico y edición</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- end computadoras -->
+
+    <!-- Laptops -->
+    <div class="laptops">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="titlepage">
+                        <h2>Laptops</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6">
+                    <div class="product_box">
+                        <figure><img src="{{ url_for('static', filename='images/laptop1.png') }}" alt="#"/></figure>
+                        <h3>Laptop Gamer</h3>
+                        <p>Alto rendimiento para gaming y trabajo</p>
+                    </div>
+                </div>
+                <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6">
+                    <div class="product_box">
+                        <figure><img src="{{ url_for('static', filename='images/laptop2.png') }}" alt="#"/></figure>
+                        <h3>Laptop Ultrabook</h3>
+                        <p>Ligera y potente para trabajo móvil</p>
+                    </div>
+                </div>
+                <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6">
+                    <div class="product_box">
+                        <figure><img src="{{ url_for('static', filename='images/laptop3.png') }}" alt="#"/></figure>
+                        <h3>Laptop Convertible</h3>
+                        <p>Versátil para trabajo y entretenimiento</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- end laptops -->
+
+    <!-- Accesorios -->
+    <div class="accesorios">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="titlepage">
+                        <h2>Accesorios</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6">
+                    <div class="product_box">
+                        <figure><img src="{{ url_for('static', filename='images/accesorio1.png') }}" alt="#"/></figure>
+                        <h3>Monitores</h3>
+                        <p>Pantallas de alta calidad para tu equipo</p>
+                    </div>
+                </div>
+                <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6">
+                    <div class="product_box">
+                        <figure><img src="{{ url_for('static', filename='images/accesorio2.png') }}" alt="#"/></figure>
+                        <h3>Periféricos</h3>
+                        <p>Teclados, mouse y más accesorios</p>
+                    </div>
+                </div>
+                <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6">
+                    <div class="product_box">
+                        <figure><img src="{{ url_for('static', filename='images/accesorio3.png') }}" alt="#"/></figure>
+                        <h3>Almacenamiento</h3>
+                        <p>Discos duros y unidades SSD</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- end accesorios -->
+
+    <!--  footer -->
+    <footer>
+        <div class="footer">
+            <div class="container">
+                <div class="row">
+                    <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6">
+                        <img class="logo1" src="{{ url_for('static', filename='images/logo1.png') }}" alt="#"/>
+                        <ul class="social_icon">
+                            <li><a href="#"><i class="fa fa-facebook" aria-hidden="true"></i></a></li>
+                            <li><a href="#"><i class="fa fa-twitter" aria-hidden="true"></i></a></li>
+                            <li><a href="#"><i class="fa fa-linkedin-square" aria-hidden="true"></i></a></li>
+                            <li><a href="#"><i class="fa fa-instagram" aria-hidden="true"></i></a></li>
+                        </ul>
+                    </div>
+                    <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6">
+                        <h3>Sobre Nosotros</h3>
+                        <ul class="about_us">
+                            <li>TecnoComputer es tu aliado en tecnología, ofreciendo productos y servicios de calidad para todas tus necesidades informáticas.</li>
+                        </ul>
+                    </div>
+                    <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6">
+                        <h3>Contacto</h3>
+                        <ul class="conta">
+                            <li>Dirección: Av. Principal #123<br>
+                                Teléfono: (123) 456-7890<br>
+                                Email: info@tecnocomputer.com</li>
+                        </ul>
+                    </div>
+                    <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6">
+                        <form class="bottom_form">
+                            <h3>Newsletter</h3>
+                            <input class="enter" placeholder="Ingresa tu email" type="text" name="Enter your email">
+                            <button class="sub_btn">Suscribirse</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="copyright">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <p>© 2024 TecnoComputer. Todos los derechos reservados.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <!-- end footer -->
+
+    <!-- Javascript files-->
+    <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/popper.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/jquery.mCustomScrollbar.concat.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/custom.js') }}"></script>
+</body>
+</html> 

@@ -1,0 +1,362 @@
+{% extends "base.html" %}
+
+{% block title %}Gestión de Tickets{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/tickets.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="tickets-container">
+    <div class="tickets-header slide-in">
+        <h1>Gestión de Tickets</h1>
+        <p>Administre los tickets de soporte y servicio</p>
+        <button class="btn-new-ticket" onclick="showNewTicketForm()">
+            <i class="fas fa-plus"></i> Nuevo Ticket
+        </button>
+    </div>
+
+    <!-- Filtros y Búsqueda -->
+    <div class="filtros-container slide-in">
+        <div class="filtros-row">
+            <div class="filtro-group">
+                <label for="busqueda">Buscar Ticket</label>
+                <div class="search-box">
+                    <input type="text" id="busqueda" placeholder="Buscar por título o contenido...">
+                    <i class="fas fa-search"></i>
+                </div>
+            </div>
+            <div class="filtro-group">
+                <label for="departamento">Departamento</label>
+                <select id="departamento">
+                    <option value="">Todos</option>
+                    {% for id, nombre in config.API_CONFIG.DEPARTMENTS.items() %}
+                    <option value="{{ id }}">{{ nombre }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="filtro-group">
+                <label for="estado">Estado</label>
+                <select id="estado">
+                    <option value="">Todos</option>
+                    {% for id, nombre in config.API_CONFIG.STATUSES.items() %}
+                    <option value="{{ id }}">{{ nombre }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lista de Tickets -->
+    <div class="tickets-list slide-in">
+        <div class="tickets-table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Título</th>
+                        <th>Departamento</th>
+                        <th>Estado</th>
+                        <th>Prioridad</th>
+                        <th>Fecha</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="ticketsTableBody">
+                    <!-- Los datos se cargarán dinámicamente -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Paginación -->
+    <div class="paginacion-container">
+        <button id="prevPage" class="paginacion-btn">Anterior</button>
+        <span id="paginaActual" class="paginacion-info">Página 1</span>
+        <button id="nextPage" class="paginacion-btn">Siguiente</button>
+    </div>
+
+    <!-- Modal para nuevo ticket -->
+    <div id="newTicketModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="hideNewTicketForm()">&times;</span>
+            <h2>Nuevo Ticket</h2>
+            <form id="newTicketForm">
+                <div class="form-group">
+                    <label for="ticketTitle">Título</label>
+                    <input type="text" id="ticketTitle" required>
+                </div>
+                <div class="form-group">
+                    <label for="ticketDepartment">Departamento</label>
+                    <select id="ticketDepartment" required>
+                        {% for id, nombre in config.API_CONFIG.DEPARTMENTS.items() %}
+                        <option value="{{ id }}">{{ nombre }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="ticketPriority">Prioridad</label>
+                    <select id="ticketPriority" required>
+                        {% for id, nombre in config.API_CONFIG.PRIORITIES.items() %}
+                        <option value="{{ id }}">{{ nombre }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="ticketContent">Contenido</label>
+                    <textarea id="ticketContent" required></textarea>
+                </div>
+                <button type="submit" class="btn-submit">Crear Ticket</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal para ver ticket -->
+    <div id="viewTicketModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="hideViewTicketModal()">&times;</span>
+            <div id="ticketDetails">
+                <!-- Los detalles del ticket se cargarán dinámicamente -->
+            </div>
+            <div class="comments-section">
+                <h3>Comentarios</h3>
+                <div id="commentsList">
+                    <!-- Los comentarios se cargarán dinámicamente -->
+                </div>
+                <form id="addCommentForm">
+                    <textarea id="commentContent" placeholder="Escribe un comentario..."></textarea>
+                    <button type="submit" class="btn-submit">Añadir Comentario</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://kit.fontawesome.com/a076d05399.js"></script>
+<script>
+    let paginaActual = 1;
+    const ticketsPorPagina = 10;
+    let ticketsFiltrados = [];
+    let ticketActual = null;
+
+    // Función para cargar tickets
+    async function cargarTickets() {
+        try {
+            const query = document.getElementById('busqueda').value;
+            const departamento = document.getElementById('departamento').value;
+            const estado = document.getElementById('estado').value;
+
+            const response = await fetch(`/api/tickets?query=${query}&department_id=${departamento}&status=${estado}`);
+            const data = await response.json();
+            
+            if (data.success) {
+                ticketsFiltrados = data.tickets;
+                mostrarTickets();
+            } else {
+                console.error('Error al cargar tickets:', data.message);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    }
+
+    // Función para mostrar tickets en la tabla
+    function mostrarTickets() {
+        const tbody = document.getElementById('ticketsTableBody');
+        tbody.innerHTML = '';
+
+        const inicio = (paginaActual - 1) * ticketsPorPagina;
+        const fin = inicio + ticketsPorPagina;
+        const ticketsPagina = ticketsFiltrados.slice(inicio, fin);
+
+        ticketsPagina.forEach(ticket => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${ticket.id}</td>
+                <td>${ticket.title}</td>
+                <td>${ticket.department_name}</td>
+                <td>
+                    <span class="estado-badge estado-${ticket.status}">
+                        ${ticket.status}
+                    </span>
+                </td>
+                <td>
+                    <span class="prioridad-badge prioridad-${ticket.priority}">
+                        ${ticket.priority}
+                    </span>
+                </td>
+                <td>${new Date(ticket.created_at).toLocaleDateString()}</td>
+                <td>
+                    <button class="btn-ver" onclick="verTicket(${ticket.id})">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                    <button class="btn-cerrar" onclick="cerrarTicket(${ticket.id})">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+
+        actualizarPaginacion();
+    }
+
+    // Función para actualizar la paginación
+    function actualizarPaginacion() {
+        const totalPaginas = Math.ceil(ticketsFiltrados.length / ticketsPorPagina);
+        document.getElementById('paginaActual').textContent = `Página ${paginaActual} de ${totalPaginas}`;
+        document.getElementById('prevPage').disabled = paginaActual === 1;
+        document.getElementById('nextPage').disabled = paginaActual === totalPaginas;
+    }
+
+    // Función para mostrar el formulario de nuevo ticket
+    function showNewTicketForm() {
+        document.getElementById('newTicketModal').style.display = 'block';
+    }
+
+    // Función para ocultar el formulario de nuevo ticket
+    function hideNewTicketForm() {
+        document.getElementById('newTicketModal').style.display = 'none';
+    }
+
+    // Función para mostrar el modal de ver ticket
+    async function verTicket(ticketId) {
+        try {
+            const response = await fetch(`/api/tickets/${ticketId}`);
+            const data = await response.json();
+            
+            if (data.success) {
+                ticketActual = data.ticket;
+                mostrarDetallesTicket();
+                document.getElementById('viewTicketModal').style.display = 'block';
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    }
+
+    // Función para mostrar los detalles del ticket
+    function mostrarDetallesTicket() {
+        const detailsDiv = document.getElementById('ticketDetails');
+        detailsDiv.innerHTML = `
+            <h2>${ticketActual.title}</h2>
+            <div class="ticket-info">
+                <p><strong>Departamento:</strong> ${ticketActual.department_name}</p>
+                <p><strong>Estado:</strong> ${ticketActual.status}</p>
+                <p><strong>Prioridad:</strong> ${ticketActual.priority}</p>
+                <p><strong>Fecha:</strong> ${new Date(ticketActual.created_at).toLocaleString()}</p>
+            </div>
+            <div class="ticket-content">
+                <h3>Contenido</h3>
+                <p>${ticketActual.content}</p>
+            </div>
+        `;
+    }
+
+    // Función para cerrar el modal de ver ticket
+    function hideViewTicketModal() {
+        document.getElementById('viewTicketModal').style.display = 'none';
+    }
+
+    // Función para cerrar un ticket
+    async function cerrarTicket(ticketId) {
+        try {
+            const response = await fetch(`/api/tickets/${ticketId}/close`, {
+                method: 'POST'
+            });
+            const data = await response.json();
+            
+            if (data.success) {
+                cargarTickets();
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    }
+
+    // Event listeners
+    document.getElementById('newTicketForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const title = document.getElementById('ticketTitle').value;
+        const department_id = document.getElementById('ticketDepartment').value;
+        const priority = document.getElementById('ticketPriority').value;
+        const content = document.getElementById('ticketContent').value;
+        
+        try {
+            const response = await fetch('/api/tickets', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    title,
+                    department_id,
+                    priority,
+                    content
+                })
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                hideNewTicketForm();
+                cargarTickets();
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    });
+
+    document.getElementById('addCommentForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const content = document.getElementById('commentContent').value;
+        
+        try {
+            const response = await fetch(`/api/tickets/${ticketActual.id}/comments`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ content })
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                document.getElementById('commentContent').value = '';
+                verTicket(ticketActual.id);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    });
+
+    // Event listeners para los filtros
+    document.getElementById('busqueda').addEventListener('input', cargarTickets);
+    document.getElementById('departamento').addEventListener('change', cargarTickets);
+    document.getElementById('estado').addEventListener('change', cargarTickets);
+
+    // Event listeners para la paginación
+    document.getElementById('prevPage').addEventListener('click', () => {
+        if (paginaActual > 1) {
+            paginaActual--;
+            mostrarTickets();
+        }
+    });
+
+    document.getElementById('nextPage').addEventListener('click', () => {
+        const totalPaginas = Math.ceil(ticketsFiltrados.length / ticketsPorPagina);
+        if (paginaActual < totalPaginas) {
+            paginaActual++;
+            mostrarTickets();
+        }
+    });
+
+    // Cargar tickets al iniciar la página
+    document.addEventListener('DOMContentLoaded', cargarTickets);
+</script>
+{% endblock %} 

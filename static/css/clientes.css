@@ -1,0 +1,227 @@
+/* Estilos específicos para la página de Clientes */
+
+/* Contenedor principal */
+.clientes-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+/* Encabezado de la página */
+.clientes-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.clientes-header h1 {
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+}
+
+.clientes-header p {
+    color: var(--secondary-color);
+}
+
+/* Filtros y búsqueda */
+.filtros-container {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.1);
+    margin-bottom: 2rem;
+}
+
+.filtros-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.filtro-group {
+    flex: 1;
+    min-width: 200px;
+}
+
+.filtro-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--secondary-color);
+    font-weight: 500;
+}
+
+.search-box {
+    position: relative;
+}
+
+.search-box input {
+    width: 100%;
+    padding: 0.75rem;
+    padding-left: 2.5rem;
+    border: 1px solid #dee2e6;
+    border-radius: 5px;
+    background-color: white;
+}
+
+.search-box i {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--secondary-color);
+}
+
+.filtro-group select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #dee2e6;
+    border-radius: 5px;
+    background-color: white;
+}
+
+/* Tabla de clientes */
+.tabla-clientes {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.1);
+    overflow: hidden;
+    margin-bottom: 2rem;
+}
+
+.tabla-clientes table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.tabla-clientes th,
+.tabla-clientes td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.tabla-clientes th {
+    background-color: var(--primary-color);
+    color: white;
+    font-weight: 500;
+}
+
+.tabla-clientes tr:hover {
+    background-color: rgba(0,0,0,0.02);
+}
+
+/* Estados de los clientes */
+.estado-badge {
+    padding: 0.5rem 1rem;
+    border-radius: 50px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    display: inline-block;
+}
+
+.estado-activo {
+    background-color: var(--success-color);
+    color: white;
+}
+
+.estado-inactivo {
+    background-color: var(--danger-color);
+    color: white;
+}
+
+/* Botones de acción */
+.btn-editar,
+.btn-ver {
+    padding: 0.5rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s;
+    margin-right: 0.5rem;
+}
+
+.btn-editar {
+    background-color: var(--warning-color);
+    color: var(--dark-color);
+}
+
+.btn-ver {
+    background-color: var(--info-color);
+    color: white;
+}
+
+.btn-editar:hover,
+.btn-ver:hover {
+    opacity: 0.8;
+}
+
+/* Paginación */
+.paginacion-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.paginacion-btn {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 5px;
+    background-color: var(--primary-color);
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.paginacion-btn:disabled {
+    background-color: var(--secondary-color);
+    cursor: not-allowed;
+}
+
+.paginacion-btn:hover:not(:disabled) {
+    background-color: var(--dark-color);
+}
+
+.paginacion-info {
+    color: var(--secondary-color);
+    font-weight: 500;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .clientes-container {
+        padding: 1rem;
+    }
+
+    .filtros-row {
+        flex-direction: column;
+    }
+
+    .filtro-group {
+        width: 100%;
+    }
+
+    .tabla-clientes {
+        overflow-x: auto;
+    }
+
+    .tabla-clientes table {
+        min-width: 800px;
+    }
+}
+
+/* Animaciones */
+@keyframes slideIn {
+    from {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.slide-in {
+    animation: slideIn 0.5s ease-out;
+} 
