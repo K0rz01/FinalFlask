@@ -60,14 +60,14 @@ class User(UserMixin):
 @login_manager.user_loader
 def load_user(user_id):
     try:
-        query = "SELECT * FROM user WHERE id = %s"
+        query = "SELECT * FROM usuarios WHERE usuario_id = %s"
         result = execute_query(query, (user_id,))
         if result:
             user_data = result[0]
             return User(
-                id=user_data['id'],
+                id=user_data['usuario_id'],
                 email=user_data['email'],
-                name=user_data['name'],
+                name=user_data['nombre'],
                 rol=user_data['rol']
             )
         return None
@@ -490,7 +490,7 @@ def api_login():
         try:
             cursor = conn.cursor(dictionary=True)
             logger.info("Buscando usuario en la base de datos")
-            cursor.execute('SELECT * FROM user WHERE email = %s', (data['email'],))
+            cursor.execute('SELECT * FROM usuarios WHERE email = %s', (data['email'],))
             user = cursor.fetchone()
             
             if not user:
@@ -511,14 +511,14 @@ def api_login():
                 return jsonify({'error': 'Contraseña incorrecta'}), 401
             
             logger.info("Actualizando último login")
-            cursor.execute('UPDATE user SET ultimo_login = NOW() WHERE id = %s', (user['id'],))
+            cursor.execute('UPDATE usuarios SET ultimo_login = NOW() WHERE usuario_id = %s', (user['usuario_id'],))
             conn.commit()
             
             # Crear objeto User para Flask-Login
             user_obj = User(
-                id=user['id'],
+                id=user['usuario_id'],
                 email=user['email'],
-                name=user['name'],
+                name=user['nombre'],
                 rol=user['rol']
             )
             
@@ -527,18 +527,18 @@ def api_login():
             
             # Configurar la sesión
             session.permanent = True
-            session['user_id'] = user['id']
+            session['user_id'] = user['usuario_id']
             session['email'] = user['email']
-            session['name'] = user['name']
+            session['name'] = user['nombre']
             session['rol'] = user['rol']
             
             logger.info(f"Login exitoso para usuario: {data['email']}")
             return jsonify({
                 'message': 'Login exitoso',
                 'user': {
-                    'id': user['id'],
+                    'id': user['usuario_id'],
                     'email': user['email'],
-                    'name': user['name'],
+                    'name': user['nombre'],
                     'rol': user['rol']
                 }
             })

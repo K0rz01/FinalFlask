@@ -4,8 +4,8 @@ from mysql.connector import Error
 # Configuración de la base de datos
 DB_CONFIG = {
     'host': 'localhost',
-    'user': 'user1',
-    'password': '1234'
+    'user': 'root',
+    'password': '12345678'
 }
 
 def setup_database():
@@ -16,10 +16,10 @@ def setup_database():
         cursor = connection.cursor()
 
         # Crear la base de datos si no existe
-        cursor.execute("CREATE DATABASE IF NOT EXISTS tecnocomputer")
+        cursor.execute("CREATE DATABASE IF NOT EXISTS `tecno-computer`")
         
         # Usar la base de datos
-        cursor.execute("USE tecnocomputer")
+        cursor.execute("USE `tecno-computer`")
 
         # Crear tablas si no existen
         cursor.execute("""

@@ -41,8 +41,8 @@ def init_database():
         cursor = connection.cursor()
         
         # Crear la base de datos si no existe
-        cursor.execute(f"CREATE DATABASE IF NOT EXISTS {DB_CONFIG['database']}")
-        cursor.execute(f"USE {DB_CONFIG['database']}")
+        cursor.execute(f"CREATE DATABASE IF NOT EXISTS `{DB_CONFIG['database']}`")
+        cursor.execute(f"USE `{DB_CONFIG['database']}`")
         
         # Leer y ejecutar el archivo SQL
         with open('bd/tecnocomputer_user.sql', 'r', encoding='utf-8') as file:
