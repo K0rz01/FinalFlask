@@ -1,4 +1,5 @@
 # Configuración de la base de datos
+# Optimizada por Olavio Loaiza - Mejoras en configuración de conexión
 DB_CONFIG = {
     'host': 'localhost',
     'database': 'tecnocomputer',
@@ -9,9 +10,11 @@ DB_CONFIG = {
     'auth_plugin': 'mysql_native_password',
     'use_pure': True,
     'raise_on_warnings': True,
-    'pool_size': 5,
+    'pool_size': 10,  # Aumentado para mejor rendimiento
     'pool_name': 'tecnocomputer_pool',
-    'connect_timeout': 20
+    'connect_timeout': 30,  # Aumentado para conexiones lentas
+    'autocommit': True,  # Agregado para transacciones automáticas
+    'sql_mode': 'STRICT_TRANS_TABLES,NO_ZERO_DATE,NO_ZERO_IN_DATE,ERROR_FOR_DIVISION_BY_ZERO'  # Modo SQL estricto
 }
 
 # Flask Configuration
