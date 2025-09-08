@@ -64,7 +64,15 @@ DB_CONFIG = {
 ## 👥 Colaboradores
 
 - **K0rz01** (oe.martinez05@ciaf.edu.co) - Desarrollador principal
-- **Olavio Loaiza** (ol.loaiza17@ciaf.edu.co) - Colaborador
+- **Olavio Loaiza** (ol.loaiza17@ciaf.edu.co) - Desarrollador colaborador
+
+## 🚀 Características Principales
+
+- **API RESTful** completa para gestión de servicios técnicos
+- **Sistema de autenticación** robusto con roles de usuario
+- **Base de datos MySQL** optimizada con triggers y procedimientos
+- **Interfaz web** responsive y moderna
+- **Documentación completa** del sistema y API
 
 ## 📝 Licencia
 
