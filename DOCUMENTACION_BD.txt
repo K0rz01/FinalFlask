@@ -1,0 +1,133 @@
+=========================================================
+DOCUMENTACIÓN BASE DE DATOS
+Proyecto: tecno-computer
+=========================================================
+
+1. CORRECCIÓN DE RELACIONES
+---------------------------
+-- Cambiar tipo de id_cliente en ordenes_servicio para que coincida con clientes.cliente_id
+ALTER TABLE ordenes_servicio
+MODIFY COLUMN id_cliente VARCHAR(50);
+
+-- Agregar clave foránea explícita
+ALTER TABLE ordenes_servicio
+ADD CONSTRAINT fk_orden_cliente
+FOREIGN KEY (id_cliente) REFERENCES clientes(cliente_id);
+
+2. TRIGGERS DE AUDITORÍA Y CONTROL
+----------------------------------
+-- Trigger: Registrar en historial_estados cada vez que cambia el estado de una orden de servicio
+DELIMITER $$
+CREATE TRIGGER tr_orden_estado_update
+AFTER UPDATE ON ordenes_servicio
+FOR EACH ROW
+BEGIN
+  IF NEW.estado <> OLD.estado THEN
+    INSERT INTO historial_estados(tabla_origen, id_registro, estado_anterior, estado_nuevo, usuario_id, comentario)
+    VALUES ('ordenes_servicio', NEW.idordenes_servicio, OLD.estado, NEW.estado, NEW.id_tecnico, 'Cambio automático de estado');
+  END IF;
+END $$
+DELIMITER ;
+
+-- Trigger: Auditoría de inserción de tickets
+DELIMITER $$
+CREATE TRIGGER tr_ticket_insert
+AFTER INSERT ON tickets
+FOR EACH ROW
+BEGIN
+  INSERT INTO historial_estados(tabla_origen, id_registro, estado_anterior, estado_nuevo, usuario_id, comentario)
+  VALUES ('tickets', NEW.ticket_id, NULL, NEW.estado, NEW.usuario_id, 'Creación de ticket');
+END $$
+DELIMITER ;
+
+3. INSERCIÓN DE DATOS (DML)
+--------------------------
+-- Ejemplo de inserción de clientes
+INSERT INTO clientes (cliente_id, first_name, last_name, email, phone_number, city, country)
+VALUES
+('C001', 'Juan', 'Pérez', 'juan.perez@email.com', '123456789', 'Bogotá', 'Colombia'),
+('C002', 'Ana', 'García', 'ana.garcia@email.com', '987654321', 'Medellín', 'Colombia');
+
+-- Ejemplo de inserción de usuarios
+INSERT INTO usuarios (email, password, nombre, apellido, rol)
+VALUES
+('admin@tecnocomputer.com', 'hash_admin', 'Admin', 'Principal', 'administrador'),
+('tecnico@tecnocomputer.com', 'hash_tecnico', 'Tecnico', 'Soporte', 'tecnico');
+
+-- Ejemplo de inserción de departamentos
+INSERT INTO departamentos (nombre, descripcion)
+VALUES
+('Soporte Técnico', 'Atención y solución de problemas técnicos'),
+('Ventas', 'Gestión de ventas y clientes');
+
+4. CONSULTAS AVANZADAS
+----------------------
+-- Consulta: Órdenes de servicio por cliente, ordenadas por fecha
+SELECT c.first_name, c.last_name, o.marca, o.modelo, o.fecha_entrada
+FROM ordenes_servicio o
+JOIN clientes c ON o.id_cliente = c.cliente_id
+ORDER BY o.fecha_entrada DESC;
+
+-- Consulta: Tickets abiertos por departamento y prioridad
+SELECT d.nombre AS departamento, t.prioridad, COUNT(*) AS total
+FROM tickets t
+JOIN departamentos d ON t.departamento_id = d.departamento_id
+WHERE t.estado = 'abierto'
+GROUP BY d.nombre, t.prioridad
+ORDER BY total DESC;
+
+-- Consulta: Subconsulta - Clientes con más de 2 órdenes de servicio
+SELECT c.cliente_id, c.first_name, c.last_name
+FROM clientes c
+WHERE (
+  SELECT COUNT(*) FROM ordenes_servicio o WHERE o.id_cliente = c.cliente_id
+) > 2;
+
+-- Consulta: Uso de operadores de conjuntos
+SELECT email FROM usuarios
+UNION
+SELECT email FROM clientes;
+
+5. PROCEDIMIENTOS Y TRANSACCIONES (TCL)
+--------------------------------------
+-- Procedimiento: Crear orden de servicio con control de errores y transacción
+DELIMITER $$
+CREATE PROCEDURE sp_crear_orden_servicio(
+  IN p_id_cliente VARCHAR(50),
+  IN p_marca VARCHAR(45),
+  IN p_modelo VARCHAR(45),
+  IN p_serial VARCHAR(45),
+  IN p_diag_inicial VARCHAR(500),
+  IN p_id_tecnico VARCHAR(45)
+)
+BEGIN
+  DECLARE EXIT HANDLER FOR SQLEXCEPTION
+  BEGIN
+    -- Si hay error, hacer rollback
+    ROLLBACK;
+    SELECT 'Error al crear la orden, operación revertida.' AS mensaje;
+  END;
+
+  START TRANSACTION;
+  INSERT INTO ordenes_servicio (id_cliente, marca, modelo, serial, diag_inicial, id_tecnico, estado)
+  VALUES (p_id_cliente, p_marca, p_modelo, p_serial, p_diag_inicial, p_id_tecnico, 'Pendiente');
+  COMMIT;
+  SELECT 'Orden creada exitosamente.' AS mensaje;
+END $$
+DELIMITER ;
+
+6. DOCUMENTACIÓN Y COMENTARIOS
+-----------------------------
+-- Todos los objetos (tablas, triggers, procedimientos) están documentados con comentarios.
+-- Se recomienda mantener este script junto con el DER y un documento PDF/Word explicando el modelo y las relaciones.
+
+7. RECOMENDACIONES FINALES
+--------------------------
+-- 1. Mantén el DER actualizado y adjunto al proyecto.
+-- 2. Documenta cada trigger, procedimiento y consulta en el propio script.
+-- 3. Realiza pruebas de inserción y consulta para validar la integridad referencial.
+-- 4. Usa nombres descriptivos y consistentes en todos los objetos de la base de datos.
+
+=========================================================
+FIN DEL SCRIPT Y DOCUMENTACIÓN
+=========================================================

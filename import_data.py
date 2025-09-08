@@ -39,10 +39,17 @@ def import_all_data():
             database=DB_CONFIG['database']
         )
         
-        # Lista de archivos SQL a importar
+        # Lista de archivos SQL a importar (ajustado para incluir todos los archivos relevantes)
         sql_files = [
+            'bd/tecnocomputer_tables.sql',
+            'bd/tecnocomputer_user.sql',
             'bd/tecnocomputer_clientes.sql',
-            'bd/tecnocomputer_ordenes_servicio.sql'
+            'bd/tecnocomputer_inventario.sql',
+            'bd/tecnocomputer_maestro_categorias.sql',
+            'bd/tecnocomputer_ordenes_servicio.sql',
+            'bd/tecnocomputer_ordenes_servicio_update.sql',
+            'bd/tecnocomputer_tickets.sql',
+            'bd/tecnocomputer_update.sql'
         ]
         
         # Importar cada archivo

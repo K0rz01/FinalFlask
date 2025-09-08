@@ -1,0 +1,72 @@
+=========================================================
+DOCUMENTACIÓN DEL PROYECTO
+Sistema de Gestión - tecno-computer
+=========================================================
+
+1. DESCRIPCIÓN GENERAL DEL PROYECTO
+-----------------------------------
+El proyecto "tecno-computer" es un sistema de gestión integral para una empresa de servicios técnicos y ventas de equipos de computación. Permite administrar clientes, órdenes de servicio, inventario, tickets de soporte, usuarios y departamentos, facilitando la trazabilidad y el control de las operaciones.
+
+2. OBJETIVOS DEL PROYECTO
+-------------------------
+- Automatizar la gestión de órdenes de servicio y tickets.
+- Mejorar la atención al cliente y el seguimiento de casos.
+- Controlar el inventario de productos y repuestos.
+- Facilitar la auditoría y el registro de cambios.
+- Proveer reportes y consultas avanzadas para la toma de decisiones.
+
+3. ARQUITECTURA Y TECNOLOGÍAS UTILIZADAS
+----------------------------------------
+- **Backend:** Python (Flask), Flask-Login, Flask-CORS, MySQL Connector
+- **Frontend:** (No incluido en este entregable, pero preparado para integración con frameworks modernos)
+- **Base de datos:** MySQL
+- **ORM/Consultas:** SQL directo y funciones utilitarias
+- **Seguridad:** Manejo de sesiones, roles de usuario, hash de contraseñas
+
+4. MÓDULOS PRINCIPALES DEL SISTEMA
+----------------------------------
+- **Gestión de usuarios:** Registro, autenticación, roles (administrador, técnico)
+- **Clientes:** Alta, modificación y consulta de clientes
+- **Órdenes de servicio:** Creación, seguimiento, historial de estados
+- **Tickets de soporte:** Creación, comentarios, asignación a departamentos
+- **Inventario:** Control de productos, categorías y stock
+- **Departamentos:** Organización interna para soporte y ventas
+- **Historial y auditoría:** Registro automático de cambios de estado y acciones relevantes
+
+5. BASE DE DATOS Y NORMALIZACIÓN
+--------------------------------
+- 9 tablas principales, todas normalizadas y relacionadas
+- Uso de claves primarias y foráneas para garantizar integridad referencial
+- Triggers para auditoría y control de cambios
+- Procedimientos almacenados para operaciones críticas y transaccionales
+- Consultas avanzadas para reportes y análisis
+
+6. SEGURIDAD Y CONTROL DE ACCESO
+-------------------------------
+- Hash de contraseñas para usuarios
+- Control de sesiones y cookies seguras
+- Roles diferenciados para acceso a funcionalidades
+- Validación de datos en backend y frontend
+
+7. PRUEBAS Y VALIDACIÓN
+----------------------
+- Pruebas de inserción y consulta en la base de datos
+- Pruebas de login y control de sesiones
+- Pruebas de triggers y procedimientos almacenados
+- Validación de integridad referencial y restricciones
+
+8. DOCUMENTACIÓN Y RECOMENDACIONES
+----------------------------------
+- El código está comentado y estructurado por módulos
+- Se adjunta script SQL documentado y ejemplos de uso
+- Se recomienda mantener actualizado el DER y la documentación técnica
+- Para producción, reforzar seguridad (HTTPS, contraseñas fuertes, backups)
+- Realizar pruebas de carga y optimización de consultas para escalabilidad
+
+9. CONCLUSIONES
+---------------
+El sistema "tecno-computer" cumple con los requisitos de gestión integral para una empresa de servicios técnicos, asegurando trazabilidad, control y eficiencia. La arquitectura modular y la documentación permiten su fácil mantenimiento y escalabilidad. El uso de buenas prácticas en base de datos y seguridad garantiza la confiabilidad del sistema.
+
+=========================================================
+FIN DE LA DOCUMENTACIÓN DEL PROYECTO
+=========================================================

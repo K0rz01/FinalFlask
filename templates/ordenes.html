@@ -165,7 +165,8 @@
          </div>
 
          <!-- Tabla -->
-         <div class="table-container">
+         <div class="table-scrollbar-top" id="scrollbarTop"></div>
+         <div class="table-container" id="tableContainer">
             <table id="ordenesServicioTable">
                <thead>
                   <tr>
@@ -191,6 +192,7 @@
                </tbody>
             </table>
          </div>
+         <div class="table-scrollbar-bottom" id="scrollbarBottom"></div>
 
          <!-- Paginación -->
          <div class="pagination">
@@ -260,6 +262,75 @@
          </div>
       </div>
 
+      <!-- Modal para editar orden -->
+      <div class="modal fade" id="editarOrdenModal" tabindex="-1" role="dialog" aria-labelledby="editarOrdenModalLabel" aria-hidden="true">
+         <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+               <div class="modal-header">
+                  <h5 class="modal-title" id="editarOrdenModalLabel">Editar Orden de Servicio</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                     <span aria-hidden="true">&times;</span>
+                  </button>
+               </div>
+               <form id="formEditarOrden">
+                  <div class="modal-body">
+                     <input type="hidden" id="edit_idordenes_servicio">
+                     <div class="form-row">
+                        <div class="form-group col-md-6">
+                           <label for="edit_marca">Marca</label>
+                           <input type="text" class="form-control" id="edit_marca" required>
+                        </div>
+                        <div class="form-group col-md-6">
+                           <label for="edit_modelo">Modelo</label>
+                           <input type="text" class="form-control" id="edit_modelo" required>
+                        </div>
+                     </div>
+                     <div class="form-row">
+                        <div class="form-group col-md-6">
+                           <label for="edit_serial">Serial</label>
+                           <input type="text" class="form-control" id="edit_serial" required>
+                        </div>
+                        <div class="form-group col-md-6">
+                           <label for="edit_tipo">Tipo</label>
+                           <input type="text" class="form-control" id="edit_tipo" required>
+                        </div>
+                     </div>
+                     <div class="form-group">
+                        <label for="edit_diag_inicial">Diagnóstico Inicial</label>
+                        <textarea class="form-control" id="edit_diag_inicial" rows="2"></textarea>
+                     </div>
+                     <div class="form-group">
+                        <label for="edit_diag_final">Diagnóstico Final</label>
+                        <textarea class="form-control" id="edit_diag_final" rows="2"></textarea>
+                     </div>
+                     <div class="form-group">
+                        <label for="edit_observaciones">Observaciones</label>
+                        <textarea class="form-control" id="edit_observaciones" rows="2"></textarea>
+                     </div>
+                     <div class="form-row">
+                        <div class="form-group col-md-6">
+                           <label for="edit_prioridad">Prioridad</label>
+                           <input type="text" class="form-control" id="edit_prioridad">
+                        </div>
+                        <div class="form-group col-md-6">
+                           <label for="edit_estado">Estado</label>
+                           <input type="text" class="form-control" id="edit_estado">
+                        </div>
+                     </div>
+                     <div class="form-group">
+                        <label for="edit_fecha_estimada">Fecha Estimada de Entrega</label>
+                        <input type="date" class="form-control" id="edit_fecha_estimada">
+                     </div>
+                  </div>
+                  <div class="modal-footer">
+                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                     <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                  </div>
+               </form>
+            </div>
+         </div>
+      </div>
+
       <!-- footer -->
       <footer>
          <div class="footer">
@@ -313,7 +384,6 @@
       <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
       <script src="{{ url_for('static', filename='js/popper.min.js') }}"></script>
       <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
-      <script src="{{ url_for('static', filename='js/jquery-3.0.0.min.js') }}"></script>
       <!-- sidebar -->
       <script src="{{ url_for('static', filename='js/jquery.mCustomScrollbar.concat.min.js') }}"></script>
       <script src="{{ url_for('static', filename='js/custom.js') }}"></script>

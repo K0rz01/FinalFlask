@@ -1,0 +1,72 @@
+# Diapositiva 1: Portada
+Título: Sistema de Gestión - tecno-computer
+Subtítulo: Proyecto de Bases de Datos
+Autor: [Tu Nombre]
+Materia: Bases de Datos
+Profesor: [Nombre del profesor]
+Fecha: [Fecha de presentación]
+
+# Diapositiva 2: Introducción
+- "tecno-computer" es un sistema de gestión para una empresa de servicios técnicos y ventas de equipos de computación.
+- Permite administrar clientes, órdenes de servicio, inventario, tickets, usuarios y departamentos.
+- El objetivo es automatizar procesos y mejorar la trazabilidad y control de la información.
+
+# Diapositiva 3: Problema y Solución
+- Problema: Dificultad para gestionar y dar seguimiento a servicios técnicos, inventario y atención al cliente.
+- Solución: Un sistema centralizado con base de datos relacional, que permite registrar, consultar y auditar todas las operaciones.
+
+# Diapositiva 4: Modelo de Datos (DER)
+- El sistema cuenta con 9 tablas principales, todas relacionadas.
+- Relaciones clave: clientes-ordenes_servicio, ordenes_servicio-tickets, tickets-departamentos, tickets-usuarios.
+- Diagrama DER (esquemático):
+
+[DER en texto]
+Clientes --< Ordenes_Servicio >-- Tickets >-- Ticket_Comentarios
+           |                        |
+           v                        v
+     Inventario              Departamentos
+           |
+           v
+Maestro_Categorias
+           |
+           v
+Usuarios --< Historial_Estados
+
+# Diapositiva 5: Estructura de la Base de Datos
+- 9 tablas normalizadas y tipadas correctamente.
+- Uso de claves primarias (PK) y foráneas (FK) para garantizar integridad.
+- Ejemplo: FK de ordenes_servicio.id_cliente -> clientes.cliente_id
+- Relaciones uno a muchos y muchos a uno.
+
+# Diapositiva 6: Normalización y Buenas Prácticas
+- Se evitó la redundancia de datos mediante normalización.
+- Cada entidad representa un concepto único (cliente, orden, ticket, etc.).
+- Ejemplo: Los datos de clientes solo se almacenan una vez y se referencian desde otras tablas.
+
+# Diapositiva 7: Triggers y Procedimientos
+- Triggers para auditoría: registran cambios de estado en historial_estados.
+- Procedimientos almacenados para operaciones críticas y transaccionales.
+- Ejemplo: Trigger que registra cada vez que cambia el estado de una orden de servicio.
+
+# Diapositiva 8: Consultas y Reportes
+- Consultas avanzadas: filtros, agrupaciones, subconsultas y operadores de conjuntos.
+- Ejemplo: Listar órdenes por cliente, tickets abiertos por departamento, clientes con más de 2 órdenes.
+- Permite generar reportes útiles para la gestión y toma de decisiones.
+
+# Diapositiva 9: Seguridad y Control
+- Hash de contraseñas y control de sesiones.
+- Roles diferenciados (administrador, técnico).
+- Integridad referencial y validaciones en la base de datos.
+
+# Diapositiva 10: Conclusiones y Recomendaciones
+- El sistema cumple con los objetivos de gestión y control.
+- La base de datos es robusta, segura y escalable.
+- Recomendaciones: mantener documentación y DER actualizados, reforzar seguridad para producción, y realizar pruebas periódicas.
+
+# Diapositiva extra: Preguntas
+- ¿Dudas o comentarios?
+
+# Notas:
+- Puedes copiar y pegar cada sección en una diapositiva de PowerPoint.
+- El DER en texto puede ser convertido en un diagrama visual usando herramientas como draw.io o PowerPoint.
+- Agrega imágenes, logos o capturas de pantalla del sistema para complementar.

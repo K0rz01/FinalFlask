@@ -255,6 +255,80 @@ def crear_orden_servicio():
         if conn:
             conn.close()
 
+@app.route('/api/ordenes_servicio/<int:orden_id>', methods=['PUT'])
+@login_required
+def editar_orden_servicio(orden_id):
+    conn = None
+    cursor = None
+    try:
+        if not hasattr(current_user, 'rol') or current_user.rol != 'tecnico':
+            return jsonify({"error": "No autorizado. Se requiere rol de técnico"}), 401
+        data = request.json
+        if not data:
+            return jsonify({"error": "No se recibieron datos"}), 400
+        conn = get_db_connection()
+        if not conn:
+            return jsonify({"error": "Error al conectar con la base de datos"}), 500
+        cursor = conn.cursor()
+        # Validar que la orden existe
+        cursor.execute("SELECT idordenes_servicio FROM ordenes_servicio WHERE idordenes_servicio = %s", (orden_id,))
+        if not cursor.fetchone():
+            return jsonify({"error": "Orden no encontrada"}), 404
+        # Actualizar la orden
+        campos = []
+        valores = []
+        campos_permitidos = ['marca', 'modelo', 'serial', 'tipo', 'diag_inicial', 'diag_final', 'observaciones', 'prioridad', 'fecha_estimada', 'estado']
+        for campo in campos_permitidos:
+            if campo in data:
+                campos.append(f"{campo} = %s")
+                valores.append(data[campo])
+        if not campos:
+            return jsonify({"error": "No hay campos para actualizar"}), 400
+        query = f"UPDATE ordenes_servicio SET {', '.join(campos)} WHERE idordenes_servicio = %s"
+        valores.append(orden_id)
+        cursor.execute(query, valores)
+        conn.commit()
+        return jsonify({"success": True, "message": "Orden actualizada exitosamente"})
+    except Exception as e:
+        if conn:
+            conn.rollback()
+        return jsonify({"error": f"Error al actualizar la orden: {str(e)}"}), 500
+    finally:
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
+
+@app.route('/api/ordenes_servicio/<int:orden_id>', methods=['DELETE'])
+@login_required
+def eliminar_orden_servicio(orden_id):
+    conn = None
+    cursor = None
+    try:
+        if not hasattr(current_user, 'rol') or current_user.rol != 'tecnico':
+            return jsonify({"error": "No autorizado. Se requiere rol de técnico"}), 401
+        conn = get_db_connection()
+        if not conn:
+            return jsonify({"error": "Error al conectar con la base de datos"}), 500
+        cursor = conn.cursor()
+        # Validar que la orden existe
+        cursor.execute("SELECT idordenes_servicio FROM ordenes_servicio WHERE idordenes_servicio = %s", (orden_id,))
+        if not cursor.fetchone():
+            return jsonify({"error": "Orden no encontrada"}), 404
+        # Eliminar la orden
+        cursor.execute("DELETE FROM ordenes_servicio WHERE idordenes_servicio = %s", (orden_id,))
+        conn.commit()
+        return jsonify({"success": True, "message": "Orden eliminada exitosamente"})
+    except Exception as e:
+        if conn:
+            conn.rollback()
+        return jsonify({"error": f"Error al eliminar la orden: {str(e)}"}), 500
+    finally:
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
+
 # Endpoints para Clientes
 @app.route('/clientes')
 @login_required

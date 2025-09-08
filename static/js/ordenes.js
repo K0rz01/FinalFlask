@@ -89,13 +89,11 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     btnPrevPage.addEventListener('click', () => {
         if (paginaActual > 1) {
-            paginaActual--;
-            cargarOrdenes();
+            cambiarPagina(paginaActual - 1);
         }
     });
     btnNextPage.addEventListener('click', () => {
-        paginaActual++;
-        cargarOrdenes();
+        cambiarPagina(paginaActual + 1);
     });
 
     // Eventos del modal de tickets
@@ -247,10 +245,11 @@ document.addEventListener('DOMContentLoaded', function() {
                         <button class="btn btn-sm btn-info" onclick="mostrarTickets(${orden.idordenes_servicio})">
                             <i class="fas fa-ticket-alt"></i> Tickets
                         </button>
-                    </td>
-                    <td>
                         <button class="btn btn-sm btn-primary" onclick="editarOrden(${orden.idordenes_servicio})">
                             <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-sm btn-danger" onclick="eliminarOrden(${orden.idordenes_servicio})">
+                            <i class="fas fa-trash-alt"></i>
                         </button>
                     </td>
                 </tr>
@@ -436,4 +435,169 @@ document.addEventListener('DOMContentLoaded', function() {
         // Implementar lógica para mostrar mensajes de éxito
         alert(mensaje);
     }
+
+    function editarOrden(id) {
+        // Buscar la orden en el array de órdenes
+        const orden = ordenes.find(o => o.idordenes_servicio == id);
+        if (!orden) {
+            alert('No se encontró la orden.');
+            return;
+        }
+        // Llenar los campos del modal con los datos de la orden
+        document.getElementById('edit_idordenes_servicio').value = orden.idordenes_servicio;
+        document.getElementById('edit_marca').value = orden.marca || '';
+        document.getElementById('edit_modelo').value = orden.modelo || '';
+        document.getElementById('edit_serial').value = orden.serial || '';
+        document.getElementById('edit_tipo').value = orden.tipo || '';
+        document.getElementById('edit_diag_inicial').value = orden.diag_inicial || '';
+        document.getElementById('edit_diag_final').value = orden.diag_final || '';
+        document.getElementById('edit_observaciones').value = orden.observaciones || '';
+        document.getElementById('edit_prioridad').value = orden.prioridad || '';
+        document.getElementById('edit_estado').value = orden.estado || '';
+        document.getElementById('edit_fecha_estimada').value = orden.fecha_estimada ? orden.fecha_estimada.split('T')[0] : '';
+        // Mostrar el modal
+        $('#editarOrdenModal').modal('show');
+    }
+
+    // Manejar el envío del formulario de edición
+    const formEditarOrden = document.getElementById('formEditarOrden');
+    if (formEditarOrden) {
+        formEditarOrden.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const id = document.getElementById('edit_idordenes_servicio').value;
+            const data = {
+                marca: document.getElementById('edit_marca').value,
+                modelo: document.getElementById('edit_modelo').value,
+                serial: document.getElementById('edit_serial').value,
+                tipo: document.getElementById('edit_tipo').value,
+                diag_inicial: document.getElementById('edit_diag_inicial').value,
+                diag_final: document.getElementById('edit_diag_final').value,
+                observaciones: document.getElementById('edit_observaciones').value,
+                prioridad: document.getElementById('edit_prioridad').value,
+                estado: document.getElementById('edit_estado').value,
+                fecha_estimada: document.getElementById('edit_fecha_estimada').value
+            };
+            fetch(`/api/ordenes_servicio/${id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                credentials: 'include',
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    $('#editarOrdenModal').modal('hide');
+                    alert('Orden actualizada exitosamente');
+                    cargarOrdenes();
+                } else {
+                    alert(data.error || 'Error al actualizar la orden');
+                }
+            })
+            .catch(error => {
+                alert('Error al actualizar la orden: ' + error.message);
+            });
+        });
+    }
+
+    function eliminarOrden(id) {
+        if (confirm('¿Estás seguro de que deseas eliminar esta orden? Esta acción no se puede deshacer.')) {
+            fetch(`/api/ordenes_servicio/${id}`, {
+                method: 'DELETE',
+                credentials: 'include',
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Orden eliminada exitosamente');
+                    cargarOrdenes();
+                } else {
+                    alert(data.error || 'Error al eliminar la orden');
+                }
+            })
+            .catch(error => {
+                alert('Error al eliminar la orden: ' + error.message);
+            });
+        }
+    }
+
+    // Funciones de sincronización de scroll para las barras superior e inferior
+    const tableContainer = document.getElementById('tableContainer');
+    const scrollbarTop = document.getElementById('scrollbarTop');
+    const scrollbarBottom = document.getElementById('scrollbarBottom');
+
+    let isScrolling = false; // Bandera para prevenir bucles infinitos de scroll
+
+    // Función para sincronizar el scroll entre los tres elementos
+    function synchronizeScroll(source) {
+        if (isScrolling) return; // Si ya estamos en un proceso de scroll, salir
+        isScrolling = true; // Activar la bandera
+
+        // Sincronizar el scrollLeft de los otros elementos con la fuente
+        if (source === tableContainer) {
+            if (scrollbarTop) scrollbarTop.scrollLeft = tableContainer.scrollLeft;
+            if (scrollbarBottom) scrollbarBottom.scrollLeft = tableContainer.scrollLeft;
+        } else if (source === scrollbarTop) {
+            if (tableContainer) tableContainer.scrollLeft = scrollbarTop.scrollLeft;
+            if (scrollbarBottom) scrollbarBottom.scrollLeft = scrollbarTop.scrollLeft;
+        } else if (source === scrollbarBottom) {
+            if (tableContainer) tableContainer.scrollLeft = scrollbarBottom.scrollLeft;
+            if (scrollbarTop) scrollbarTop.scrollLeft = scrollbarBottom.scrollLeft;
+        }
+
+        // Resetear la bandera después de un corto tiempo para permitir nuevos scrolls
+        setTimeout(() => {
+            isScrolling = false;
+        }, 50); // Pequeño retardo para evitar conflictos
+    }
+
+    // Añadir oyentes de eventos a los elementos scrollables
+    if (tableContainer) {
+        tableContainer.addEventListener('scroll', () => synchronizeScroll(tableContainer));
+    }
+    if (scrollbarTop) {
+        // Asegurarse de que el div interno exista para simular el ancho
+        let innerDivTop = document.createElement('div');
+        innerDivTop.style.height = '1px'; // Altura mínima para que sea visible pero no ocupe espacio real
+        scrollbarTop.appendChild(innerDivTop);
+        scrollbarTop.addEventListener('scroll', () => synchronizeScroll(scrollbarTop));
+    }
+    if (scrollbarBottom) {
+        // Asegurarse de que el div interno exista para simular el ancho
+        let innerDivBottom = document.createElement('div');
+        innerDivBottom.style.height = '1px';
+        scrollbarBottom.appendChild(innerDivBottom);
+        scrollbarBottom.addEventListener('scroll', () => synchronizeScroll(scrollbarBottom));
+    }
+
+    // Función para actualizar el ancho de las barras de desplazamiento basado en el ancho de la tabla
+    function updateScrollbarWidths() {
+        const table = document.getElementById('ordenesServicioTable');
+        if (table) {
+            const tableWidth = table.scrollWidth;
+            if (scrollbarTop && scrollbarTop.querySelector('div')) {
+                scrollbarTop.querySelector('div').style.width = `${tableWidth}px`;
+            }
+            if (scrollbarBottom && scrollbarBottom.querySelector('div')) {
+                scrollbarBottom.querySelector('div').style.width = `${tableWidth}px`;
+            }
+        }
+    }
+
+    // Llamar a updateScrollbarWidths al inicio y en el evento de redimensionamiento de la ventana
+    updateScrollbarWidths();
+    window.addEventListener('resize', updateScrollbarWidths);
+
+    // Sobrescribir la función actualizarTabla para asegurar que las barras se actualicen después
+    const originalActualizarTabla = actualizarTabla;
+    actualizarTabla = function() {
+        originalActualizarTabla();
+        // Retrasar la actualización de las barras para asegurar que el DOM se haya renderizado completamente
+        setTimeout(updateScrollbarWidths, 0);
+    };
+
+    window.editarOrden = editarOrden;
+    window.eliminarOrden = eliminarOrden;
+    window.mostrarTickets = mostrarTickets;
 });

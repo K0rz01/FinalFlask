@@ -1,9 +1,9 @@
 # Configuración de la base de datos
 DB_CONFIG = {
     'host': 'localhost',
-    'database': 'tecno-computer',
+    'database': 'tecnocomputer',
     'user': 'root',
-    'password': '12345678',
+    'password': '11111111',
     'charset': 'utf8mb4',
     'port': 3306,
     'auth_plugin': 'mysql_native_password',

@@ -28,6 +28,14 @@ body {
     max-height: 50px;
 }
 
+/* Estilos para el logo del footer */
+.logo1 {
+    max-height: 50px; /* Ajusta este valor si necesitas que sea más pequeño */
+    width: auto; /* Mantiene la proporción de la imagen */
+    display: block; /* Para que margin: auto funcione */
+    margin-bottom: 20px; /* Espacio debajo del logo */
+}
+
 .navigation .navbar-nav .nav-link {
     color: var(--light-color);
     padding: 0.5rem 1rem;
